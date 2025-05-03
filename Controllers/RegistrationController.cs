@@ -22,5 +22,12 @@ namespace LoginAPI.Controllers
             _registrationService.AddUserAsync(reg);
             return Ok();
         }
+
+        [HttpPost("FetchUser")]
+        public IActionResult FetchUser([FromBody] string email)
+        {
+            _registrationService.FetchUserasync(email);
+            return Ok();
+        }
     }
 }
