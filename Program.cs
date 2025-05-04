@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("https://personalfinance-opal.vercel.app").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            policy.WithOrigins("https://personalfinance-opal.vercel.app").AllowAnyMethod().AllowAnyHeader()/*.AllowCredentials()*/;
         });
 
 
