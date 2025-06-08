@@ -12,7 +12,7 @@ RUN dotnet restore
 RUN dotnet publish -c Release -o /app/publish
 
 # Final stage/image
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "LoginAPI.dll"]
