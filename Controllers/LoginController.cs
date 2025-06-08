@@ -28,7 +28,7 @@ namespace LoginAPI.Controllers
         {
 
             var user =  _loginService.GetUserAsync().Result;
-            var filteruser = user.Where(user => user.Email == login.Username && user.Password == login.Password).FirstOrDefault();
+            var filteruser = user.Where(user => user.Name == login.Username && user.Password == login.Password).FirstOrDefault();
             if (user != null && filteruser!=null)
             {
                 var claims = new[] {
