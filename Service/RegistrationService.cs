@@ -22,10 +22,19 @@ namespace LoginAPI.Service
 
         public async Task AddUserAsync(Registration reg)
         {
-            await _usersCollection.InsertOneAsync(reg);
-            string senderMail = _configuration["Email:senderMail"].ToString();
-            string senderPassword = _configuration["Email:senderPassword"].ToString();
-            string emailBody = $@"
+            string email = reg.Email;
+            var filter =  Builders<Registration>.Filter.Eq(u => u.Email, email);
+
+            var listuser =  await _usersCollection.Find(filter).FirstOrDefaultAsync();
+            if (listuser != null)
+            {
+                reg.Valid = false;
+            }
+            else
+            {
+                string senderMail = _configuration["Email:senderMail"].ToString();
+                string senderPassword = _configuration["Email:senderPassword"].ToString();
+                string emailBody = $@"
                             <div style='font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;'>
                               <div style='max-width: 600px; margin: auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
                                 <h2 style='color: #333;'>Welcome, {reg.Name}!</h2>
@@ -41,25 +50,27 @@ namespace LoginAPI.Service
                                 <p style='font-size: 14px; color: #999;'>- PERSONAL FINANCE- +91-9600891448</p>
                               </div>
                             </div>";
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            smtp.EnableSsl = true;
-            //smtp.Timeout = 100000;
-            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential(senderMail, senderPassword);
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+                smtp.EnableSsl = true;
+                //smtp.Timeout = 100000;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential(senderMail, senderPassword);
 
-            MailMessage mail = new MailMessage(senderMail, reg.Email, "FOR UNDER TESTING", emailBody);
-            mail.IsBodyHtml = true;
-            mail.BodyEncoding = UTF8Encoding.UTF8;
+                MailMessage mail = new MailMessage(senderMail, reg.Email, "FOR UNDER TESTING", emailBody);
+                mail.IsBodyHtml = true;
+                mail.BodyEncoding = UTF8Encoding.UTF8;
+                reg.Valid=true;
 
-            try
-            {
+                try
+                {
 
-                smtp.Send(mail);
-            }
-            catch (SmtpException e)
-            {
-                //textBox1.Text = e.Message;
+                    smtp.Send(mail);
+                }
+                catch (SmtpException e)
+                {
+                    //textBox1.Text = e.Message;
+                }
             }
         }
 

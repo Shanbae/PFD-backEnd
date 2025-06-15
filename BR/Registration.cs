@@ -17,5 +17,7 @@ namespace LoginAPI.BR
         public DateTime DOB { get; set; }
        
         public string Password { get; set; }
+
+        public bool Valid { get; set; }
     }
 }

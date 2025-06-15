@@ -17,10 +17,13 @@ namespace LoginAPI.Controllers
 
         }
         [HttpPost("AddUser")]
-        public IActionResult AddUser([FromBody] Registration reg)
+        public async Task<IActionResult> AddUser([FromBody] Registration reg)
         {
-            _registrationService.AddUserAsync(reg);
-            return Ok();
+            await _registrationService.AddUserAsync(reg);
+            if (reg.Valid)
+                return Ok("User added successfully.");
+            else
+                return BadRequest("Failed to add user.");
         }
 
         [HttpPost("FetchUser")]

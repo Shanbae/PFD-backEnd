@@ -1,5 +1,6 @@
 ﻿using LoginAPI.BR;
 using LoginAPI.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -28,14 +29,13 @@ namespace LoginAPI.Controllers
         {
 
             var user =  _loginService.GetUserAsync().Result;
-            var filteruser = user.Where(user => user.Name == login.Username && user.Password == login.Password).FirstOrDefault();
+            var filteruser = user.Where(user => user.Email == login.Username && user.Password == login.Password).FirstOrDefault();
             if (user != null && filteruser!=null)
             {
                 var claims = new[] {
                     new Claim(JwtRegisteredClaimNames.Sub,_configurationBuilder["Jwt:Subject"]),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    new Claim("Username",filteruser.Name.ToString()),
-                    new Claim("Password",filteruser.Password.ToString()),
+                    new Claim(ClaimTypes.Name,filteruser.Email.ToString()),
 
                 };
 
@@ -52,10 +52,18 @@ namespace LoginAPI.Controllers
                     
 
                 }); ;
-                return Ok(new { Token = tokenvalue, User = user });
+                return Ok(new { Token = tokenvalue, User = filteruser });
 
             }
             return NoContent();
+        }
+
+        [Authorize]
+        [HttpGet("DashBoard")]
+        public IActionResult GetDashBoard()
+        {
+            var userName = User.Identity.Name;
+            return Ok(new { UserName = userName });
         }
     }
 }
