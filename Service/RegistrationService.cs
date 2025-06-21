@@ -32,6 +32,7 @@ namespace LoginAPI.Service
             }
             else
             {
+                 _usersCollection.InsertOneAsync(reg);
                 string senderMail = _configuration["Email:senderMail"].ToString();
                 string senderPassword = _configuration["Email:senderPassword"].ToString();
                 string emailBody = $@"

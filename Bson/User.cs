@@ -16,6 +16,8 @@ namespace LoginAPI.Bson
         public DateTime DOB { get; set; }
         [BsonElement("Password")]
         public string Password { get; set; }
+        [BsonElement("Valid")]
+        public bool Valid { get; set; }
         
     }
 }
